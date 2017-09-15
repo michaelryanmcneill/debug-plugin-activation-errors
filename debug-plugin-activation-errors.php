@@ -13,14 +13,14 @@ if (is_admin()) {
 /* Debug Plugin Activation errors */
 add_action('activated_plugin','plugin_activation_save_error');
 function plugin_activation_save_error(){
-    update_option('plugin_activation_error_message',  ob_get_contents());
+    update_site_option('plugin_activation_error_message',  ob_get_contents());
 }
 
 /* Display Admin Notices */
-add_action('admin_notices', 'plugin_activation_error_notice');
+add_action('network_admin_notices', 'plugin_activation_error_notice');
 function plugin_activation_error_notice() {
 
-        $error = get_option('plugin_activation_error_message');
+        $error = get_site_option('plugin_activation_error_message');
         if ($error !== ""){
         echo '<div class="updated"><h2>The Issues Causing "unexpected output" are:</h2>';
         echo "<pre>";
@@ -38,20 +38,20 @@ add_action('admin_init', 'plugin_activation_message_reset');
 function plugin_activation_message_reset() {
     global $current_user;
         if ( isset($_GET['plugin_activation_message_reset']) && '1' == $_GET['plugin_activation_message_reset'] ) {
-         update_option('plugin_activation_error_message',  'Activation Error Cleared. Run your plugin activation again from plugins admin page. Turn off this plugin to get rid of these messages'); // clear errors
+         update_site_option('plugin_activation_error_message',  'Activation Error Cleared. Run your plugin activation again from plugins admin page. Turn off this plugin to get rid of these messages'); // clear errors
     }
 }
 
 /* Activation Method  */
 register_activation_hook( __FILE__, 'plugin_activation_error_setup' );
 function plugin_activation_error_setup() {
-    add_option('plugin_activation_error_message',  'Error Log Empty. Run your plugin activation');
+    add_site_option('plugin_activation_error_message',  'Error Log Empty. Run your plugin activation');
 }
 
 /* Delete on deactivation */
 register_deactivation_hook( __FILE__, 'plugin_activation_error_delete' );
 function plugin_activation_error_delete() {
-    delete_option( 'plugin_activation_error_message' );
+    delete_site_option( 'plugin_activation_error_message' );
 }
 
 }
